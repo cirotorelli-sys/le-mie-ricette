@@ -1,13 +1,14 @@
 const CACHE_NAME = 'ricettario-v1';
+const BASE = '/le-mie-ricette';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/data.js',
-  '/js/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/css/style.css',
+  BASE + '/js/data.js',
+  BASE + '/js/app.js',
+  BASE + '/manifest.json',
+  BASE + '/icons/icon-192.png',
+  BASE + '/icons/icon-512.png'
 ];
 
 // Install: cache all assets

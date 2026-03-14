@@ -630,6 +630,17 @@ textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ===== CREDITS ===== */
+.credits {
+  text-align: center;
+  padding: 24px 14px 8px;
+  font-size: 12px;
+  color: var(--cm);
+  font-family: sans-serif;
+  font-style: italic;
+}
+.credits strong { color: var(--cwd); font-style: normal; }
+
 /* ===== PRINT ===== */
 @media print {
   .header, .toolbar, .tab-bar, .sort-bar, .btn-add,
