@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#8B3A0F">
+  <meta name="description" content="Il tuo ricettario digitale personale">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ricettario">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <title>Il Mio Ricettario</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div>
+        <h1>Il Mio Ricettario</h1>
+        <p>Ricette di famiglia · Calcolo porzioni automatico</p>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn-sm" onclick="exportAll()" title="Esporta">&#8659;</button>
+        <button class="icon-btn-sm" onclick="triggerImport()" title="Importa">&#8657;</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH + SORT -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="searchInput" placeholder="Cerca ricette, ingredienti..." oninput="renderList()" autocomplete="off">
+    </div>
+    <select id="sortSelect" onchange="renderList()">
+      <option value="az">A-Z</option>
+      <option value="za">Z-A</option>
+      <option value="rating">&#9733; Migliori</option>
+      <option value="time">&#128293; Tempo</option>
+      <option value="diff">Difficoltà</option>
+    </select>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" onclick="setTab('tutti',this)">Tutte</button>
+    <button class="tab" onclick="setTab('antipasto',this)">Antipasto</button>
+    <button class="tab" onclick="setTab('primo',this)">Primo</button>
+    <button class="tab" onclick="setTab('secondo',this)">Secondo</button>
+    <button class="tab" onclick="setTab('contorno',this)">Contorno</button>
+    <button class="tab" onclick="setTab('dolce',this)">Dolce</button>
+  </div>
+
+  <!-- LIST SECTION -->
+  <div class="section visible" id="listSection">
+    <div class="sort-bar">
+      <span class="count-tag" id="recipeCount">0 ricette</span>
+    </div>
+    <div class="recipe-list" id="recipeList"></div>
+    <button class="btn-add" onclick="showAdd()">+ Aggiungi nuova ricetta</button>
+    <div style="height: 80px;"></div>
+  </div>
+
+  <!-- ADD / EDIT SECTION -->
+  <div class="section" id="addSection">
+    <div class="form-card">
+      <div class="fsec">Informazioni generali</div>
+      <div class="field-row two-col">
+        <div><label>Titolo *</label><input type="text" id="fTitolo" placeholder="Es. Pasta al pomodoro"></div>
+        <div><label>Categoria</label>
+          <select id="fCategoria">
+            <option value="antipasto">Antipasto</option>
+            <option value="primo">Primo</option>
+            <option value="secondo">Secondo</option>
+            <option value="contorno">Contorno</option>
+            <option value="dolce">Dolce</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row"><label>Descrizione</label><textarea id="fDesc" placeholder="Breve descrizione del piatto..."></textarea></div>
+      <div class="field-row two-col">
+        <div><label>Origine / Regione</label><input type="text" id="fOrigine" placeholder="Es. Roma, Sicilia..."></div>
+        <div><label>Difficoltà</label>
+          <div class="diff-row">
+            <button class="diff-btn f-facile" onclick="setDiff('facile',this)">Facile</button>
+            <button class="diff-btn f-medio active" onclick="setDiff('medio',this)">Medio</button>
+            <button class="diff-btn f-difficile" onclick="setDiff('difficile',this)">Difficile</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <label>Tag (premi Invio per aggiungere)</label>
+        <div class="tag-input" id="tagContainer" onclick="document.getElementById('tagInputField').focus()">
+          <input type="text" id="tagInputField" placeholder="vegetariano, veloce..." onkeydown="addTag(event)">
+        </div>
+      </div>
+      <div class="field-row"><label>Note personali</label><textarea id="fNote" placeholder="Varianti, suggerimenti, ricordi..."></textarea></div>
+
+      <div class="fsec">Porzioni base</div>
+      <div class="servings-bar">
+        <label>Persone:</label>
+        <input type="range" min="1" max="20" value="4" id="fServings" oninput="document.getElementById('fServCount').textContent=this.value">
+        <span class="scount" id="fServCount">4</span>
+      </div>
+
+      <div class="fsec">Ingredienti</div>
+      <div class="ing-header">
+        <span>Ingrediente</span><span>Qtà</span><span>Unità</span><span></span>
+      </div>
+      <div id="ingredientiList"></div>
+      <button class="btn-sec" onclick="addIngrediente()">+ Ingrediente</button>
+
+      <div class="fsec">Fasi di preparazione</div>
+      <div id="fasiList"></div>
+      <button class="btn-sec" onclick="addFase()">+ Fase</button>
+
+      <div class="btn-row">
+        <button class="btn-sec" onclick="cancelAdd()">Annulla</button>
+        <button class="btn-pri" onclick="saveRecipe()">Salva ricetta</button>
+      </div>
+      <div style="height: 40px;"></div>
+    </div>
+  </div>
+
+  <!-- VIEW SECTION -->
+  <div class="section" id="viewSection">
+    <div class="view-top-bar">
+      <button class="back-btn" onclick="backToList()">&#8592; Ricette</button>
+      <div class="view-top-actions">
+        <button class="icon-btn-sm" onclick="printRecipe()" title="Stampa">&#128438;</button>
+        <button class="icon-btn-sm" onclick="shareRecipe(_viewId)" title="Condividi">&#128279;</button>
+        <button class="icon-btn-sm" onclick="exportSingle(_viewId)" title="Esporta">&#8659;</button>
+      </div>
+    </div>
+    <div id="recipeDetail"></div>
+    <div style="height: 80px;"></div>
+  </div>
+
+</div>
+
+<!-- RATING MODAL -->
+<div class="modal-bg" id="ratingModal">
+  <div class="modal">
+    <h3>Valuta questa ricetta</h3>
+    <p>Quanto ti è piaciuta?</p>
+    <div class="stars" id="starsRow">
+      <span class="star" onclick="setRating(1)">&#9733;</span>
+      <span class="star" onclick="setRating(2)">&#9733;</span>
+      <span class="star" onclick="setRating(3)">&#9733;</span>
+      <span class="star" onclick="setRating(4)">&#9733;</span>
+      <span class="star" onclick="setRating(5)">&#9733;</span>
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn-sec" onclick="closeModal()">Annulla</button>
+      <button class="btn-pri" onclick="confirmRating()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" style="display:none">
+  <span>&#128241; Installa l'app sulla schermata Home!</span>
+  <button onclick="installApp()">Installa</button>
+  <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none'">&#215;</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(() => {
+      console.log('Service Worker registrato');
+    });
+  }
+</script>
+</body>
+</html>

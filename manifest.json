@@ -1,0 +1,36 @@
+{
+  "name": "Il Mio Ricettario",
+  "short_name": "Ricettario",
+  "description": "Il tuo ricettario digitale personale con calcolo automatico delle porzioni",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F0E8DF",
+  "theme_color": "#8B3A0F",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Aggiungi Ricetta",
+      "short_name": "Aggiungi",
+      "description": "Aggiungi una nuova ricetta",
+      "url": "/?action=add",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
