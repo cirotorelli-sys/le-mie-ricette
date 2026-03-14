@@ -26,7 +26,8 @@
         <p>Ricette di famiglia · Calcolo porzioni automatico</p>
       </div>
       <div class="header-actions">
-        <button class="icon-btn-sm" onclick="exportAll()" title="Esporta">&#8659;</button>
+        <button class="icon-btn-sm" onclick="exportAllPDF()" title="Esporta tutto PDF">PDF</button>
+        <button class="icon-btn-sm" onclick="exportAll()" title="Esporta JSON">JSON</button>
         <button class="icon-btn-sm" onclick="triggerImport()" title="Importa">&#8657;</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
       </div>
@@ -136,8 +137,9 @@
       <button class="back-btn" onclick="backToList()">&#8592; Ricette</button>
       <div class="view-top-actions">
         <button class="icon-btn-sm" onclick="printRecipe()" title="Stampa">&#128438;</button>
+        <button class="icon-btn-sm" onclick="exportSinglePDF(_viewId)" title="Esporta PDF">PDF</button>
+        <button class="icon-btn-sm" onclick="exportSingle(_viewId)" title="Esporta JSON">JSON</button>
         <button class="icon-btn-sm" onclick="shareRecipe(_viewId)" title="Condividi">&#128279;</button>
-        <button class="icon-btn-sm" onclick="exportSingle(_viewId)" title="Esporta">&#8659;</button>
       </div>
     </div>
     <div id="recipeDetail"></div>
