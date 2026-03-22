@@ -2,7 +2,8 @@
   "name": "Il Mio Ricettario",
   "short_name": "Ricettario",
   "description": "Il tuo ricettario digitale personale con calcolo automatico delle porzioni",
-  "start_url": "/",
+  "start_url": "/le-mie-ricette/",
+  "scope": "/le-mie-ricette/",
   "display": "standalone",
   "background_color": "#F0E8DF",
   "theme_color": "#8B3A0F",
@@ -29,7 +30,7 @@
       "name": "Aggiungi Ricetta",
       "short_name": "Aggiungi",
       "description": "Aggiungi una nuova ricetta",
-      "url": "/?action=add",
+      "url": "/le-mie-ricette/?action=add",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
