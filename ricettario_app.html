@@ -1,0 +1,593 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cw:#8B3A0F;--cwl:#F5EDE6;--cwm:#C97040;--cwd:#5C2409;--cc:#FBF7F2;--cb:#E8DDD4;--ct:#2C1A0E;--cm:#8A7060}
+body{font-family:'Georgia',serif;color:var(--ct);background:transparent}
+.app{max-width:700px;margin:0 auto;padding:0.5rem}
+.header{text-align:center;padding:1.2rem 0 0.8rem;border-bottom:2px solid var(--cb)}
+.header h1{font-size:26px;font-weight:700;color:var(--cwd);letter-spacing:-0.5px}
+.header p{font-size:12px;color:var(--cm);margin-top:3px;font-style:italic}
+.toolbar{display:flex;gap:8px;margin:10px 0 8px;flex-wrap:wrap;align-items:center}
+.search-wrap{flex:1;min-width:160px;position:relative}
+.search-wrap input{padding:8px 12px 8px 34px;border:1px solid var(--cb);border-radius:20px;font-size:13px;width:100%;background:#fff;outline:none;font-family:sans-serif;transition:border 0.15s}
+.search-wrap input:focus{border-color:var(--cwm)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--cm);font-size:14px;pointer-events:none}
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.tab{padding:5px 13px;border-radius:20px;border:1px solid var(--cb);background:transparent;cursor:pointer;font-size:12px;color:var(--cm);transition:all 0.15s;font-family:'Georgia',serif}
+.tab.active{background:var(--cw);border-color:var(--cw);color:#fff}
+.tab:hover:not(.active){background:var(--cwl);color:var(--cw)}
+.section{display:none}.section.visible{display:block}
+.recipe-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.recipe-card{background:var(--cwl);border:1px solid var(--cb);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.15s;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.recipe-card:hover{border-color:var(--cwm);transform:translateY(-1px)}
+.recipe-card h3{font-size:14px;color:var(--cwd)}
+.recipe-card .meta{font-size:11px;color:var(--cm);margin-top:2px;font-family:sans-serif}
+.badge{background:var(--cw);color:#fff;font-size:10px;padding:3px 9px;border-radius:12px;white-space:nowrap;font-family:sans-serif;flex-shrink:0}
+.btn-add{width:100%;padding:10px;border-radius:8px;border:2px dashed var(--cwm);background:transparent;color:var(--cwm);font-size:13px;cursor:pointer;font-family:'Georgia',serif;transition:all 0.15s}
+.btn-add:hover{background:var(--cwl)}
+.form-card{background:var(--cc);border:1px solid var(--cb);border-radius:12px;padding:18px}
+.fsec{font-size:12px;font-weight:700;color:var(--cw);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.fsec::after{content:'';flex:1;height:1px;background:var(--cb)}
+label{font-size:12px;color:var(--cm);display:block;margin-bottom:3px;font-family:sans-serif}
+input,select,textarea{width:100%;padding:8px 11px;border:1px solid var(--cb);border-radius:7px;font-size:13px;color:var(--ct);background:#fff;font-family:'Georgia',serif;outline:none;transition:border 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--cwm)}
+textarea{resize:vertical;min-height:60px}
+.field-row{display:grid;gap:8px;margin-bottom:10px}
+.two-col{grid-template-columns:1fr 1fr}
+.servings-bar{display:flex;align-items:center;gap:10px;background:var(--cwl);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.servings-bar label{margin:0;white-space:nowrap;font-size:13px;color:var(--cwd);font-family:sans-serif}
+.servings-bar input[type=range]{flex:1;accent-color:var(--cw)}
+.scount{font-size:20px;font-weight:700;color:var(--cw);min-width:32px;text-align:center}
+.ing-row{display:grid;grid-template-columns:3fr 1.1fr 1.4fr 28px;gap:6px;align-items:center;margin-bottom:6px}
+.btn-rm{background:transparent;border:none;cursor:pointer;color:#C0A090;font-size:16px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.1s;flex-shrink:0}
+.btn-rm:hover{background:#F5E0D8;color:var(--cw)}
+.btn-sec{padding:7px 14px;border:1px solid var(--cwm);border-radius:7px;background:transparent;color:var(--cwm);font-size:12px;cursor:pointer;font-family:'Georgia',serif;transition:all 0.1s}
+.btn-sec:hover{background:var(--cwl)}
+.btn-pri{padding:9px 20px;border:none;border-radius:7px;background:var(--cw);color:#fff;font-size:13px;cursor:pointer;font-family:'Georgia',serif;transition:all 0.1s}
+.btn-pri:hover{background:var(--cwd)}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.fase-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
+.fase-num{width:24px;height:24px;border-radius:50%;background:var(--cw);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:5px;font-family:sans-serif}
+.fase-desc{flex:1}
+.fase-time-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:5px}
+.recipe-view{background:var(--cc);border-radius:12px;border:1px solid var(--cb);padding:22px}
+.recipe-view h2{font-size:22px;color:var(--cwd);margin-bottom:3px}
+.rvcat{font-size:11px;color:var(--cw);font-style:italic;margin-bottom:14px;font-family:sans-serif}
+.info-strip{display:flex;gap:14px;background:var(--cwl);border-radius:8px;padding:10px 14px;margin-bottom:14px;flex-wrap:wrap}
+.info-item{text-align:center}
+.info-item .val{font-size:18px;font-weight:700;color:var(--cwd)}
+.info-item .lbl{font-size:10px;color:var(--cm);font-family:sans-serif}
+.ing-table{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:13px}
+.ing-table th{text-align:left;padding:6px 8px;border-bottom:2px solid var(--cb);color:var(--cm);font-size:10px;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;font-weight:normal}
+.ing-table td{padding:7px 8px;border-bottom:1px solid var(--cb)}
+.ing-table tr:last-child td{border-bottom:none}
+.ing-qty{font-weight:700;color:var(--cwd)}
+.ing-um{color:var(--cm);font-size:11px;font-family:sans-serif}
+.fase-step{display:flex;gap:10px;margin-bottom:14px}
+.fase-step .num{width:28px;height:28px;border-radius:50%;background:var(--cw);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:sans-serif;font-weight:700}
+.fase-step .ftitle{font-weight:700;font-size:13px;color:var(--cwd);margin-bottom:2px}
+.fase-step .fdesc{font-size:13px;line-height:1.6}
+.tempi{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.tempo-tag{font-size:10px;background:#F5E8D8;color:var(--cwd);padding:2px 8px;border-radius:12px;font-family:sans-serif}
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--cm)}
+.empty-state .icon{font-size:36px;margin-bottom:10px}
+.empty-state p{font-size:13px}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:none;cursor:pointer;color:var(--cwm);font-size:12px;margin-bottom:14px;padding:5px 9px;border-radius:6px;font-family:'Georgia',serif}
+.back-btn:hover{background:var(--cwl)}
+.adj-bar{display:flex;align-items:center;gap:10px;background:var(--cwl);border-radius:8px;padding:9px 13px;margin-bottom:14px}
+.adj-bar label{font-size:12px;color:var(--cwd);margin:0;font-family:sans-serif}
+.adj-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--cwm);background:transparent;cursor:pointer;font-size:16px;color:var(--cwm);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.adj-btn:hover{background:var(--cw);color:#fff;border-color:var(--cw)}
+.adj-num{font-size:18px;font-weight:700;color:var(--cwd);min-width:28px;text-align:center}
+.top-actions{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.icon-btn{padding:6px 12px;border:1px solid var(--cb);border-radius:20px;background:transparent;cursor:pointer;font-size:11px;color:var(--cm);font-family:sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.icon-btn:hover{border-color:var(--cwm);color:var(--cwm);background:var(--cwl)}
+.sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sort-bar select{padding:5px 10px;border-radius:20px;border:1px solid var(--cb);font-size:12px;color:var(--cm);background:#fff;font-family:sans-serif;outline:none}
+.count-tag{font-size:11px;color:var(--cm);font-family:sans-serif}
+.view-action-row{display:flex;gap:8px;margin-top:18px;border-top:1px solid var(--cb);padding-top:14px;flex-wrap:wrap}
+.note-box{background:#fff;border:1px solid var(--cb);border-radius:8px;padding:12px;margin-top:14px}
+.note-box label{font-size:11px;color:var(--cw);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.note-box textarea{min-height:50px;font-size:12px}
+.modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;display:none}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:12px;padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto}
+.modal h3{font-size:17px;color:var(--cwd);margin-bottom:12px}
+.modal p{font-size:13px;color:var(--cm);line-height:1.6;margin-bottom:10px}
+.stars{display:flex;gap:4px;margin:10px 0}
+.star{font-size:24px;cursor:pointer;color:#D4C4B0;transition:color 0.1s}
+.star.on{color:#E8A020}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--cwd);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-family:sans-serif;z-index:2000;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.difficulty-row{display:flex;gap:6px;margin:8px 0 10px}
+.diff-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--cb);background:transparent;cursor:pointer;font-size:11px;color:var(--cm);font-family:sans-serif;transition:all 0.1s}
+.diff-btn.active{color:#fff}
+.diff-btn.f-facile.active{background:#5A9E5A;border-color:#5A9E5A}
+.diff-btn.f-medio.active{background:var(--cwm);border-color:var(--cwm)}
+.diff-btn.f-difficile.active{background:var(--cw);border-color:var(--cw)}
+.tag-input{display:flex;gap:6px;flex-wrap:wrap;border:1px solid var(--cb);border-radius:7px;padding:6px;background:#fff;min-height:36px;cursor:text;align-items:center}
+.tag{background:var(--cwl);color:var(--cwd);font-size:11px;padding:2px 8px;border-radius:12px;font-family:sans-serif;cursor:pointer}
+.tag:hover{background:#F5C4A0}
+.tag-input input{border:none;outline:none;font-size:12px;font-family:sans-serif;flex:1;min-width:80px;padding:2px}
+@media print{
+  .back-btn,.view-action-row,.adj-bar,.tab-bar,.toolbar,.sort-bar,.btn-add{display:none!important}
+  .recipe-view{border:none;padding:0}
+  body{color:#000}
+}
+</style>
+
+<div class="app">
+  <div class="header">
+    <h1>Il Mio Ricettario</h1>
+    <p>Ricette di famiglia · Calcolo porzioni · Stampa · Esporta</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="searchInput" placeholder="Cerca ricette, ingredienti..." oninput="renderList()" autocomplete="off">
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="exportAll()">&#8659; Esporta JSON</button>
+      <button class="icon-btn" onclick="triggerImport()">&#8657; Importa JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+    </div>
+  </div>
+
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" onclick="setTab('tutti',this)">Tutte</button>
+    <button class="tab" onclick="setTab('antipasto',this)">Antipasto</button>
+    <button class="tab" onclick="setTab('primo',this)">Primo</button>
+    <button class="tab" onclick="setTab('secondo',this)">Secondo</button>
+    <button class="tab" onclick="setTab('contorno',this)">Contorno</button>
+    <button class="tab" onclick="setTab('dolce',this)">Dolce</button>
+  </div>
+
+  <div class="section visible" id="listSection">
+    <div class="sort-bar">
+      <span class="count-tag" id="recipeCount">0 ricette</span>
+      <select id="sortSelect" onchange="renderList()" style="margin-left:auto">
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+        <option value="rating">Migliori valutate</option>
+        <option value="time">Tempo cottura</option>
+        <option value="diff">Difficoltà</option>
+      </select>
+    </div>
+    <div class="recipe-list" id="recipeList"></div>
+    <button class="btn-add" onclick="showAdd()">+ Aggiungi nuova ricetta</button>
+  </div>
+
+  <div class="section" id="addSection">
+    <div class="form-card">
+      <div class="fsec">Informazioni generali</div>
+      <div class="field-row two-col">
+        <div><label>Titolo ricetta *</label><input type="text" id="fTitolo" placeholder="Es. Pasta al pomodoro"></div>
+        <div><label>Categoria</label>
+          <select id="fCategoria">
+            <option value="antipasto">Antipasto</option>
+            <option value="primo">Primo</option>
+            <option value="secondo">Secondo</option>
+            <option value="contorno">Contorno</option>
+            <option value="dolce">Dolce</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row"><label>Descrizione</label><textarea id="fDesc" placeholder="Breve descrizione del piatto..."></textarea></div>
+      <div class="field-row two-col">
+        <div><label>Origine / Regione</label><input type="text" id="fOrigine" placeholder="Es. Roma, Sicilia..."></div>
+        <div><label>Difficoltà</label>
+          <div class="difficulty-row">
+            <button class="diff-btn f-facile" onclick="setDiff('facile',this)">Facile</button>
+            <button class="diff-btn f-medio active" onclick="setDiff('medio',this)">Medio</button>
+            <button class="diff-btn f-difficile" onclick="setDiff('difficile',this)">Difficile</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row"><label>Tag (premi Invio per aggiungere)</label>
+        <div class="tag-input" id="tagContainer" onclick="document.getElementById('tagInputField').focus()">
+          <input type="text" id="tagInputField" placeholder="vegetariano, veloce..." onkeydown="addTag(event)" style="border:none;outline:none;font-size:12px;flex:1;min-width:80px;padding:2px;font-family:sans-serif">
+        </div>
+      </div>
+      <div class="field-row"><label>Note personali</label><textarea id="fNote" placeholder="Varianti, suggerimenti, ricordi legati a questa ricetta..."></textarea></div>
+
+      <div class="fsec">Porzioni base</div>
+      <div class="servings-bar">
+        <label>Persone:</label>
+        <input type="range" min="1" max="20" value="4" id="fServings" oninput="document.getElementById('fServCount').textContent=this.value">
+        <span class="scount" id="fServCount">4</span>
+      </div>
+
+      <div class="fsec">Ingredienti</div>
+      <div style="display:grid;grid-template-columns:3fr 1.1fr 1.4fr 28px;gap:6px;margin-bottom:5px">
+        <span style="font-size:10px;color:var(--cm);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px">Ingrediente</span>
+        <span style="font-size:10px;color:var(--cm);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px">Quantità</span>
+        <span style="font-size:10px;color:var(--cm);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px">Unità</span>
+        <span></span>
+      </div>
+      <div id="ingredientiList"></div>
+      <button class="btn-sec" onclick="addIngrediente()">+ Ingrediente</button>
+
+      <div class="fsec">Fasi di preparazione</div>
+      <div id="fasiList"></div>
+      <button class="btn-sec" onclick="addFase()">+ Fase</button>
+
+      <div class="btn-row">
+        <button class="btn-sec" onclick="cancelAdd()">Annulla</button>
+        <button class="btn-pri" onclick="saveRecipe()">Salva ricetta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="viewSection">
+    <button class="back-btn" onclick="backToList()">&#8592; Tutte le ricette</button>
+    <div class="recipe-view" id="recipeDetail"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="ratingModal">
+  <div class="modal">
+    <h3>Valuta questa ricetta</h3>
+    <p>Quanto ti è piaciuta? Clicca su una stella.</p>
+    <div class="stars" id="starsRow">
+      <span class="star" onclick="setRating(1)">&#9733;</span>
+      <span class="star" onclick="setRating(2)">&#9733;</span>
+      <span class="star" onclick="setRating(3)">&#9733;</span>
+      <span class="star" onclick="setRating(4)">&#9733;</span>
+      <span class="star" onclick="setRating(5)">&#9733;</span>
+    </div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn-sec" onclick="closeModal()">Annulla</button>
+      <button class="btn-pri" onclick="confirmRating()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ricette = JSON.parse(localStorage.getItem('ricettario_v2')||'null') || [
+  {id:1,titolo:'Spaghetti alla Carbonara',categoria:'primo',desc:'Il classico romano: uova, guanciale, pecorino e pepe nero. Cremosa senza panna.',origine:'Roma',difficolta:'medio',tags:['tradizionale','veloce'],note:'Usare solo guanciale, non pancetta. La temperatura è fondamentale per non stracciare le uova.',porzioni:4,rating:5,ingredienti:[
+    {nome:'Spaghetti',qty:400,um:'g'},{nome:'Guanciale',qty:200,um:'g'},{nome:'Uova intere',qty:2,um:'pz'},
+    {nome:'Tuorli',qty:4,um:'pz'},{nome:'Pecorino romano',qty:100,um:'g'},{nome:'Pepe nero',qty:1,um:'cucchiaino'}
+  ],fasi:[
+    {desc:'Tagliare il guanciale a listarelle e rosolarlo in padella senza olio a fuoco medio fino a renderlo croccante.',cottura:8,riposo:0,tipo:'cottura'},
+    {desc:'Cuocere gli spaghetti in abbondante acqua salata.',cottura:10,riposo:0,tipo:'cottura'},
+    {desc:'Sbattere le uova con i tuorli, il pecorino grattugiato e abbondante pepe nero.',cottura:0,riposo:0,tipo:'preparazione'},
+    {desc:'Scolare la pasta al dente mantenendo un po\' di acqua di cottura. Mantecare fuori dal fuoco con il guanciale e il composto di uova, aggiungendo acqua a filo.',cottura:2,riposo:0,tipo:'mantecatura'}
+  ]},
+  {id:2,titolo:'Tiramisù Classico',categoria:'dolce',desc:'Il dessert italiano per eccellenza: mascarpone, savoiardi, caffè e cacao.',origine:'Veneto',difficolta:'facile',tags:['classico','senza cottura'],note:'Preparare almeno 4 ore prima per un risultato ottimale. Ottimo anche il giorno dopo.',porzioni:6,rating:4,ingredienti:[
+    {nome:'Mascarpone',qty:500,um:'g'},{nome:'Uova',qty:4,um:'pz'},{nome:'Zucchero',qty:100,um:'g'},
+    {nome:'Savoiardi',qty:300,um:'g'},{nome:'Caffè espresso',qty:300,um:'ml'},{nome:'Cacao amaro',qty:30,um:'g'}
+  ],fasi:[
+    {desc:'Preparare il caffè e lasciarlo raffreddare completamente.',cottura:0,riposo:15,tipo:'preparazione'},
+    {desc:'Montare i tuorli con lo zucchero fino ad ottenere un composto chiaro e spumoso.',cottura:0,riposo:0,tipo:'preparazione'},
+    {desc:'Incorporare il mascarpone alla crema di tuorli, poi aggiungere delicatamente gli albumi montati a neve con movimenti dal basso verso l\'alto.',cottura:0,riposo:0,tipo:'preparazione'},
+    {desc:'Inzuppare rapidamente i savoiardi nel caffè e disporli in una teglia. Coprire con la crema al mascarpone, ripetere gli strati.',cottura:0,riposo:0,tipo:'assemblaggio'},
+    {desc:'Spolverare con cacao amaro e riporre in frigorifero.',cottura:0,riposo:240,tipo:'riposo'}
+  ]},
+  {id:3,titolo:'Pollo alla Cacciatora',categoria:'secondo',desc:'Pollo brasato con pomodoro, olive, capperi e vino bianco. Un classico della domenica.',origine:'Toscana',difficolta:'medio',tags:['domenica','invernale'],note:'Con del pane casereccio per fare la scarpetta è ancora migliore.',porzioni:4,rating:5,ingredienti:[
+    {nome:'Pollo (pezzi)',qty:1.2,um:'kg'},{nome:'Pomodori pelati',qty:400,um:'g'},{nome:'Olive nere',qty:80,um:'g'},
+    {nome:'Capperi',qty:30,um:'g'},{nome:'Vino bianco',qty:150,um:'ml'},{nome:'Cipolla',qty:1,um:'pz'},
+    {nome:'Aglio',qty:2,um:'spicchio'},{nome:'Rosmarino',qty:1,um:'rametto'},{nome:'Olio EVO',qty:3,um:'cucchiaio'}
+  ],fasi:[
+    {desc:'Rosolare i pezzi di pollo in olio extravergine con aglio e rosmarino fino a doratura su tutti i lati.',cottura:12,riposo:0,tipo:'cottura'},
+    {desc:'Aggiungere la cipolla tritata e sfumare con il vino bianco.',cottura:3,riposo:0,tipo:'cottura'},
+    {desc:'Unire i pomodori pelati spezzettati, le olive e i capperi. Aggiustare di sale.',cottura:0,riposo:0,tipo:'assemblaggio'},
+    {desc:'Cuocere a fuoco basso con coperchio, girando occasionalmente.',cottura:40,riposo:0,tipo:'cottura'},
+    {desc:'Riposare 5 minuti prima di servire.',cottura:0,riposo:5,tipo:'riposo'}
+  ]}
+];
+let currentCategory='tutti';
+let nextId=Math.max(...ricette.map(r=>r.id),0)+1;
+let ingCount=0;faseCount=0;
+let currentDiff='medio';
+let currentTags=[];
+let _viewId=null;_viewPortions=null;
+let _ratingTmp=0;
+
+function save(){localStorage.setItem('ricettario_v2',JSON.stringify(ricette))}
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));document.getElementById(id).classList.add('visible')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+function setTab(cat,el){
+  currentCategory=cat;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+function setDiff(d,el){
+  currentDiff=d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function addTag(e){
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const val=e.target.value.trim().replace(/,/g,'');
+    if(val&&!currentTags.includes(val)){
+      currentTags.push(val);
+      renderTags();
+    }
+    e.target.value='';
+  }
+}
+function renderTags(){
+  const c=document.getElementById('tagContainer');
+  const inp=document.getElementById('tagInputField');
+  c.innerHTML='';
+  currentTags.forEach((t,i)=>{
+    const span=document.createElement('span');
+    span.className='tag';span.textContent=t+' ×';
+    span.onclick=()=>{currentTags.splice(i,1);renderTags()};
+    c.appendChild(span);
+  });
+  c.appendChild(inp);
+  inp.focus();
+}
+
+function getFilteredSorted(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const sort=document.getElementById('sortSelect').value;
+  let list=ricette.filter(r=>{
+    if(currentCategory!=='tutti'&&r.categoria!==currentCategory)return false;
+    if(!q)return true;
+    return r.titolo.toLowerCase().includes(q)||
+      (r.desc||'').toLowerCase().includes(q)||
+      (r.origine||'').toLowerCase().includes(q)||
+      (r.tags||[]).some(t=>t.toLowerCase().includes(q))||
+      r.ingredienti.some(i=>i.nome.toLowerCase().includes(q));
+  });
+  const diff={facile:1,medio:2,difficile:3};
+  if(sort==='az')list.sort((a,b)=>a.titolo.localeCompare(b.titolo));
+  else if(sort==='za')list.sort((a,b)=>b.titolo.localeCompare(a.titolo));
+  else if(sort==='rating')list.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(sort==='time')list.sort((a,b)=>totalTime(b)-totalTime(a));
+  else if(sort==='diff')list.sort((a,b)=>(diff[b.difficolta]||0)-(diff[a.difficolta]||0));
+  return list;
+}
+
+function totalTime(r){return r.fasi.reduce((s,f)=>s+f.cottura+f.riposo,0)}
+function starsHTML(n){return Array.from({length:5},(_,i)=>`<span style="color:${i<n?'#E8A020':'#D4C4B0'};font-size:12px">&#9733;</span>`).join('')}
+
+function renderList(){
+  const list=getFilteredSorted();
+  const catLabel={antipasto:'Antipasto',primo:'Primo',secondo:'Secondo',contorno:'Contorno',dolce:'Dolce'};
+  document.getElementById('recipeCount').textContent=list.length+' ricett'+(list.length===1?'a':'e');
+  if(!list.length){
+    document.getElementById('recipeList').innerHTML='<div class="empty-state"><div class="icon">&#127859;</div><p>Nessuna ricetta trovata.</p></div>';
+    return;
+  }
+  const t=totalTime;
+  document.getElementById('recipeList').innerHTML=list.map(r=>`
+    <div class="recipe-card" onclick="viewRecipe(${r.id})">
+      <div style="flex:1;min-width:0">
+        <h3>${r.titolo}</h3>
+        <div class="meta">${r.ingredienti.length} ingr. &bull; ${r.porzioni} porz. ${totalTime(r)?'&bull; '+totalTime(r)+" min tot.":''}${r.origine?' &bull; '+r.origine:''}&nbsp;&nbsp;${starsHTML(r.rating||0)}</div>
+        ${(r.tags||[]).length?`<div style="margin-top:3px">${r.tags.map(t=>`<span class="tag">${t}</span>`).join(' ')}</div>`:''}
+      </div>
+      <span class="badge">${catLabel[r.categoria]||r.categoria}</span>
+    </div>`).join('');
+}
+
+function showAdd(){
+  ingCount=0;faseCount=0;currentTags=[];currentDiff='medio';
+  ['fTitolo','fDesc','fOrigine','fNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fServings').value=4;
+  document.getElementById('fServCount').textContent='4';
+  document.getElementById('ingredientiList').innerHTML='';
+  document.getElementById('fasiList').innerHTML='';
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.diff-btn.f-medio').classList.add('active');
+  renderTags();
+  addIngrediente();addIngrediente();addIngrediente();
+  addFase();addFase();
+  showSection('addSection');
+}
+
+function cancelAdd(){renderList();showSection('listSection')}
+
+const umOptions=`<option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="l">l</option><option value="cl">cl</option><option value="pz">pz</option><option value="cucchiaio">cucchiaio</option><option value="cucchiaino">cucchiaino</option><option value="tazza">tazza</option><option value="spicchio">spicchio</option><option value="foglia">foglia</option><option value="rametto">rametto</option><option value="fetta">fetta</option><option value="pizzico">pizzico</option><option value="qb">q.b.</option>`;
+
+function addIngrediente(){
+  const i=ingCount++;
+  const d=document.createElement('div');
+  d.className='ing-row';d.id='ing_'+i;
+  d.innerHTML=`<input type="text" placeholder="Es. Farina 00"><input type="number" min="0" step="0.01" placeholder="250"><select>${umOptions}</select><button class="btn-rm" onclick="document.getElementById('ing_${i}').remove()">&#215;</button>`;
+  document.getElementById('ingredientiList').appendChild(d);
+}
+
+const tipoOptions=`<option value="preparazione">Preparazione</option><option value="cottura">Cottura</option><option value="mantecatura">Mantecatura</option><option value="assemblaggio">Assemblaggio</option><option value="riposo">Riposo</option><option value="impiattamento">Impiattamento</option>`;
+
+function addFase(){
+  const i=faseCount++;
+  const d=document.createElement('div');
+  d.className='fase-row';d.id='fase_'+i;
+  d.innerHTML=`<div class="fase-num">${i+1}</div>
+  <div class="fase-desc">
+    <textarea placeholder="Descrivi questa fase..."></textarea>
+    <div class="fase-time-row">
+      <div><label>Cottura (min)</label><input type="number" min="0" value="0"></div>
+      <div><label>Riposo (min)</label><input type="number" min="0" value="0"></div>
+      <div><label>Tipo</label><select>${tipoOptions}</select></div>
+    </div>
+  </div>
+  <button class="btn-rm" onclick="document.getElementById('fase_${i}').remove()" style="margin-top:5px">&#215;</button>`;
+  document.getElementById('fasiList').appendChild(d);
+}
+
+function saveRecipe(){
+  const titolo=document.getElementById('fTitolo').value.trim();
+  if(!titolo){alert('Inserisci il titolo della ricetta');return}
+  const ingredienti=[];
+  document.querySelectorAll('#ingredientiList .ing-row').forEach(row=>{
+    const ins=row.querySelectorAll('input,select');
+    if(ins[0].value.trim())ingredienti.push({nome:ins[0].value.trim(),qty:parseFloat(ins[1].value)||0,um:ins[2].value});
+  });
+  if(!ingredienti.length){alert('Aggiungi almeno un ingrediente');return}
+  const fasi=[];
+  document.querySelectorAll('#fasiList .fase-row').forEach(row=>{
+    const ta=row.querySelector('textarea');
+    if(ta&&ta.value.trim()){
+      const nums=row.querySelectorAll('input[type=number]');
+      const sel=row.querySelector('select');
+      fasi.push({desc:ta.value.trim(),cottura:parseInt(nums[0]?.value)||0,riposo:parseInt(nums[1]?.value)||0,tipo:sel?.value||'preparazione'});
+    }
+  });
+  ricette.push({id:nextId++,titolo,categoria:document.getElementById('fCategoria').value,desc:document.getElementById('fDesc').value,origine:document.getElementById('fOrigine').value,difficolta:currentDiff,tags:[...currentTags],note:document.getElementById('fNote').value,porzioni:parseInt(document.getElementById('fServings').value),rating:0,ingredienti,fasi});
+  save();renderList();showSection('listSection');toast('Ricetta salvata!');
+}
+
+function viewRecipe(id){
+  _viewId=id;const r=ricette.find(x=>x.id===id);
+  if(!r)return;
+  _viewPortions=r.porzioni;
+  renderDetail(r,_viewPortions);
+  showSection('viewSection');
+}
+
+function fmtQty(q,ratio){
+  const v=q*ratio;
+  if(v===Math.round(v))return Math.round(v);
+  return parseFloat(v.toFixed(2));
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+const diffColor={facile:'#5A9E5A',medio:'#C97040',difficile:'#8B3A0F'};
+const catLabel={antipasto:'Antipasto',primo:'Primo',secondo:'Secondo',contorno:'Contorno',dolce:'Dolce'};
+
+function renderDetail(r,vp){
+  const ratio=vp/r.porzioni;
+  const totC=r.fasi.reduce((s,f)=>s+f.cottura,0);
+  const totR=r.fasi.reduce((s,f)=>s+f.riposo,0);
+  document.getElementById('recipeDetail').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:0"><h2>${r.titolo}</h2>
+        <div class="rvcat">${catLabel[r.categoria]||r.categoria}${r.origine?' · '+r.origine:''}${r.difficolta?' · <span style="color:'+diffColor[r.difficolta]+'">'+cap(r.difficolta)+'</span>':''}</div>
+      </div>
+      ${r.rating?`<div style="font-size:14px">${starsHTML(r.rating)}</div>`:''}
+    </div>
+    ${r.desc?`<p style="font-size:13px;color:var(--cm);margin-bottom:12px;font-style:italic;line-height:1.6">${r.desc}</p>`:''}
+    ${(r.tags||[]).length?`<div style="margin-bottom:10px">${r.tags.map(t=>`<span class="tag">${t}</span>`).join(' ')}</div>`:''}
+    <div class="adj-bar">
+      <label>Porzioni:</label>
+      <button class="adj-btn" onclick="changeP(-1)">&#8722;</button>
+      <span class="adj-num" id="adjNum">${vp}</span>
+      <button class="adj-btn" onclick="changeP(1)">+</button>
+      <span style="font-size:11px;color:var(--cm);margin-left:8px;font-family:sans-serif">(base: ${r.porzioni})</span>
+    </div>
+    <div class="info-strip">
+      <div class="info-item"><div class="val">${vp}</div><div class="lbl">Porzioni</div></div>
+      <div class="info-item"><div class="val">${r.ingredienti.length}</div><div class="lbl">Ingredienti</div></div>
+      ${totC?`<div class="info-item"><div class="val">${totC}'</div><div class="lbl">Cottura</div></div>`:''}
+      ${totR?`<div class="info-item"><div class="val">${totR}'</div><div class="lbl">Riposo</div></div>`:''}
+      ${(totC+totR)?`<div class="info-item"><div class="val">${totC+totR}'</div><div class="lbl">Totale</div></div>`:''}
+    </div>
+    <div class="fsec" style="margin-top:0">Ingredienti</div>
+    <table class="ing-table">
+      <thead><tr><th>Ingrediente</th><th>Quantità</th><th>Unità</th></tr></thead>
+      <tbody>${r.ingredienti.map(ing=>`<tr><td>${ing.nome}</td><td class="ing-qty">${fmtQty(ing.qty,ratio)}</td><td class="ing-um">${ing.um}</td></tr>`).join('')}</tbody>
+    </table>
+    <div class="fsec">Preparazione</div>
+    ${r.fasi.map((f,i)=>`<div class="fase-step"><div class="num">${i+1}</div><div><div class="ftitle">${cap(f.tipo)}</div><div class="fdesc">${f.desc}</div><div class="tempi">${f.cottura?`<span class="tempo-tag">&#128293; Cottura: ${f.cottura} min</span>`:''} ${f.riposo?`<span class="tempo-tag">&#8987; Riposo: ${f.riposo} min</span>`:''}</div></div></div>`).join('')}
+    ${r.note?`<div class="note-box"><label>Note personali</label><p style="font-size:13px;color:var(--cm);line-height:1.6;margin-top:6px;font-style:italic">${r.note}</p></div>`:''}
+    <div class="view-action-row">
+      <button class="btn-sec" onclick="openRating(${r.id})">&#9733; Valuta</button>
+      <button class="btn-sec" onclick="printRecipe()">&#128438; Stampa</button>
+      <button class="btn-sec" onclick="exportSingle(${r.id})">&#8659; Esporta</button>
+      <button class="btn-sec" onclick="shareRecipe(${r.id})">&#128279; Condividi testo</button>
+      <button class="btn-sec" style="margin-left:auto;color:var(--cw)" onclick="deleteRecipe(${r.id})">&#128465; Elimina</button>
+    </div>`;
+  _viewId=r.id;
+}
+
+function changeP(d){
+  _viewPortions=Math.max(1,(_viewPortions||1)+d);
+  const r=ricette.find(x=>x.id===_viewId);
+  if(r)renderDetail(r,_viewPortions);
+}
+function backToList(){renderList();showSection('listSection')}
+function printRecipe(){window.print()}
+
+function exportSingle(id){
+  const r=ricette.find(x=>x.id===id);
+  if(!r)return;
+  dl(JSON.stringify([r],null,2),r.titolo.replace(/\s+/g,'_')+'.json');
+  toast('Ricetta esportata!');
+}
+
+function exportAll(){
+  dl(JSON.stringify(ricette,null,2),'ricettario_completo.json');
+  toast('Tutte le ricette esportate!');
+}
+
+function dl(content,filename){
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(content);
+  a.download=filename;a.click();
+}
+
+function triggerImport(){document.getElementById('importFile').click()}
+
+function importJSON(input){
+  const f=input.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const arr=Array.isArray(data)?data:[data];
+      let added=0;
+      arr.forEach(r=>{
+        if(r.titolo&&r.ingredienti){
+          r.id=nextId++;
+          ricette.push(r);added++;
+        }
+      });
+      save();renderList();showSection('listSection');
+      toast(added+' ricett'+(added===1?'a':'e')+' importate!');
+    }catch{alert('File JSON non valido')}
+  };
+  reader.readAsText(f);
+  input.value='';
+}
+
+function shareRecipe(id){
+  const r=ricette.find(x=>x.id===id);if(!r)return;
+  const ratio=(_viewPortions||r.porzioni)/r.porzioni;
+  let txt=`🍽️ ${r.titolo}\n`;
+  if(r.origine)txt+=`📍 ${r.origine}\n`;
+  txt+=`👥 ${_viewPortions||r.porzioni} porzioni\n\n`;
+  txt+=`INGREDIENTI:\n`;
+  r.ingredienti.forEach(i=>txt+=`- ${i.nome}: ${fmtQty(i.qty,ratio)} ${i.um}\n`);
+  txt+=`\nPREPARAZIONE:\n`;
+  r.fasi.forEach((f,i)=>{
+    txt+=`${i+1}. [${cap(f.tipo)}] ${f.desc}`;
+    if(f.cottura)txt+=` (cottura: ${f.cottura} min)`;
+    if(f.riposo)txt+=` (riposo: ${f.riposo} min)`;
+    txt+='\n';
+  });
+  if(r.note)txt+=`\nNOTE: ${r.note}`;
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('Testo copiato negli appunti!'))}
+  else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Testo copiato!')}
+}
+
+function openRating(id){
+  _viewId=id;_ratingTmp=ricette.find(x=>x.id===id)?.rating||0;
+  highlightStars(_ratingTmp);
+  document.getElementById('ratingModal').classList.add('open');
+}
+function closeModal(){document.getElementById('ratingModal').classList.remove('open')}
+function setRating(n){_ratingTmp=n;highlightStars(n)}
+function highlightStars(n){document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('on',i<n)})}
+function confirmRating(){
+  const r=ricette.find(x=>x.id===_viewId);
+  if(r){r.rating=_ratingTmp;save();renderDetail(r,_viewPortions);toast('Valutazione salvata!')}
+  closeModal();
+}
+
+document.getElementById('ratingModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+
+renderList();
+</script>
