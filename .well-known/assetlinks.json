@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "it.cirotorelli.ricettario",
+    "sha256_cert_fingerprints": [
+      "DE:3A:06:02:64:A5:F9:ED:A1:88:23:BE:88:94:D2:1C:17:80:89:51:15:7B:AB:60:17:EF:C8:66:73:63:CB:19"
+    ]
+  }
+}]
